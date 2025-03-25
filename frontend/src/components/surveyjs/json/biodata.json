@@ -1,0 +1,28 @@
+{
+  "pages": [
+    {
+      "name": "biodata",
+      "title": "Biodata",
+      "elements": [
+        {
+          "type": "text",
+          "name": "name",
+          "title": "Name",
+          "isRequired": true
+        },
+        {
+          "type": "text",
+          "name": "email",
+          "title": "Email",
+          "inputType": "email",
+          "isRequired": true,
+          "validators": [
+            {
+              "type": "email"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

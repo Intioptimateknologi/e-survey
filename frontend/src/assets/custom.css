@@ -1,0 +1,9 @@
+/* SURVEY JS */
+.sa-commercial,
+.svc-creator__banner {
+  display: none !important;
+}
+
+.sv-string-viewer.sv-string-viewer--multiline {
+  color: black;
+}
