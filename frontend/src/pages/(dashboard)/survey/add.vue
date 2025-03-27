@@ -104,7 +104,7 @@ async function handleSave(): Promise<void> {
         title: 'Success',
         description: 'Survey saved successfully',
       })
-      router.push('/survey/list')
+      router.push('/survey')
     }
   } catch (error) {
     console.error("Error saving survey:", error);

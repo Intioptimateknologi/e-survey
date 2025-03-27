@@ -40,12 +40,17 @@ async function handleLogin() {
   errorMessage.value = "";
 
   try {
-    const { data, error } = await useApiFetch("/api/v1/token/")
+    const { data, error, response, statusCode } = await useApiFetch("/api/v1/token/")
       .post({ username: email.value, password: password.value })
       .json();
 
-    if (error.value) {
+    console.log('data', data.value)
+    console.log('statusCode', statusCode.value)
+
+    if (statusCode.value === 401) {
+      console.log('-> Invalid username or password');
       errorMessage.value = "Invalid username or password";
+      loading.value = false
       return;
     }
 
@@ -85,7 +90,7 @@ async function handleLogin() {
             <Label for="password">Password</Label>
             <ForgotPasswordDialog />
           </div>
-          <Input v-model="password" id="password" type="password" required />
+          <Input v-model="password" id="password" type="password" required @keydown.enter="handleLogin" />
         </div>
         <p v-if="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
         <Button :disabled="loading" @click="handleLogin" class="w-full">

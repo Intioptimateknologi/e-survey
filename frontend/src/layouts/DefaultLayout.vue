@@ -77,7 +77,12 @@ import { useAuthStore } from "@/stores/auth";
 
 const isMenuOpen = ref(false);
 
-const isSurvey = ref(false);
+const props = defineProps({
+  isSurvey: {
+    type: Boolean,
+    default: false,
+  },
+})
 
 const authStore = useAuthStore();
 

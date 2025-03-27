@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/v1/token/', api_auth.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/register/', api_auth.RegisterView.as_view({"post": "create"}), name='register'),
+    path('api/v1/dashboard/', api_auth.DashboardView.as_view({"get": "list"}), name='register'),
     path("api/v1/", include(router.urls)),
 ]
 

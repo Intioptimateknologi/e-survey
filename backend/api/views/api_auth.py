@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+from django.db.models.functions import TruncDate
 from django.http import HttpResponse
 from rest_framework import viewsets, permissions
 from rest_framework import filters
@@ -26,6 +28,72 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from api.serializers import auth_serializer as serializers
 from core.pagination import ItemPagination
 from api import models
+from survey import models as survey_models
+from location import models as location_models
+
+class DashboardView(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        admin_users = User.objects.filter(profile__role='admin').count()
+        member_users = User.objects.filter(profile__role='member').count()
+        users = admin_users + member_users
+        surveys = survey_models.survey.objects.all().count()
+        respondents = survey_models.respondent.objects.all().count()
+        data = {
+            'surveys': surveys,
+            'respondents': respondents,
+            'users': {
+                'admin': admin_users,
+                'member': member_users,
+                'total': users
+            },
+        }
+
+        # Charting
+        # Ambil data 30 hari terakhir
+        today = date.today()
+        last_30_days = today - timedelta(days=30)
+
+        # Trafik registrasi user member
+        member_traffic = (
+            User.objects.filter(profile__role='member', date_joined__gte=last_30_days)
+            .annotate(date=TruncDate('date_joined'))
+            .values('date')
+            .annotate(count=Count('id'))
+            .order_by('date')
+        )
+
+        # Trafik pengisian responden
+        respondent_traffic = (
+            survey_models.respondent.objects.filter(created_at__gte=last_30_days)
+            .annotate(date=TruncDate('created_at'))
+            .values('date')
+            .annotate(count=Count('id'))
+            .order_by('date')
+        )
+
+        # Trafik pembuatan survey
+        survey_traffic = (
+            survey_models.survey.objects.filter(created_at__gte=last_30_days)
+            .annotate(date=TruncDate('created_at'))
+            .values('date')
+            .annotate(count=Count('id'))
+            .order_by('date')
+        )
+
+        chart_data = {
+            'member_registration': list(member_traffic),
+            'respondent_filling': list(respondent_traffic),
+            'survey_creation': list(survey_traffic),
+        }
+
+        return Response({
+            'success': True,
+            'message': 'Dashboard API',
+            'data': data,
+            'chart': chart_data
+        }, status=status.HTTP_200_OK)
 
 class RegisterView(CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = [permissions.AllowAny]

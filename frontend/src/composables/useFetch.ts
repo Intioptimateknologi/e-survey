@@ -12,7 +12,6 @@ const useApiFetch = createFetch({
   combination: "overwrite",
   options: {
     async beforeFetch({ options }) {
-      const authStore = useAuthStore();
       const accessToken = authStore.accessToken;
       if (accessToken !== null) {
         options.headers = {
@@ -23,12 +22,17 @@ const useApiFetch = createFetch({
       return { options };
     },
     onFetchError({ data, response, context, execute, error }) {
-      console.log(data, response, context, execute);
+      // console.log(data, response, context, execute);
       const needRefreshToken =
         (response?.status === 401 || response?.status === 403) &&
         context.url !== `${API_BASE_URL}/api/v1/token/refresh/`;
+      let isAuthenticated = true;
+      const accessToken = authStore.accessToken;
+      if (accessToken === null) {
+        isAuthenticated = false;
+      }
 
-      if (needRefreshToken) {
+      if (needRefreshToken && isAuthenticated) {
         refreshToken().then((newToken) => {
           if (newToken.access) {
             isRefreshing = false;
