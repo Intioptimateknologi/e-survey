@@ -22,25 +22,40 @@ const useApiFetch = createFetch({
       return { options };
     },
     onFetchError({ data, response, context, execute, error }) {
-      // console.log(data, response, context, execute);
       const needRefreshToken =
-        (response?.status === 401 || response?.status === 403) &&
-        context.url !== `${API_BASE_URL}/api/v1/token/refresh/`;
+        response?.status === 401 || response?.status === 403;
+
       let isAuthenticated = true;
+
       const accessToken = authStore.accessToken;
-      if (accessToken === null) {
-        isAuthenticated = false;
+      isAuthenticated = accessToken !== null;
+
+      const isRefreshingToken =
+        context.url == `${API_BASE_URL}/api/v1/token/refresh/`;
+      console.log("isRefreshingToken", context.url);
+      console.log(
+        "isRefreshingToken 2",
+        `${API_BASE_URL}/api/v1/token/refresh/`
+      );
+      console.log("isRefreshingToken", isRefreshingToken);
+
+      if (isRefreshingToken) {
+        useAuthStore().logout();
       }
 
       if (needRefreshToken && isAuthenticated) {
         refreshToken().then((newToken) => {
+          if (newToken === null) {
+            console.log("logout");
+            useAuthStore().logout();
+          }
+
           if (newToken.access) {
             isRefreshing = false;
             useAuthStore().setAccessToken(newToken.access);
             onRrefreshed();
           } else {
             refreshSubscribers.length = 0;
-            // handle refresh token error
           }
         });
 
@@ -69,6 +84,10 @@ async function refreshToken() {
     },
     body: JSON.stringify({ refresh: authStore.refreshToken }),
   });
+
+  if (response.status !== 200) {
+    return null;
+  }
   const data = await response.json();
   return data;
 }

@@ -25,6 +25,17 @@ class SurveyViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.SurveySerializer
     filter_backends = [DjangoFilterBackend, ]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filterset_fields = ['created_by']
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return models.survey.objects.none()
+
+        if user.profile.role == 'admin':
+            return models.survey.objects.all()
+        return models.survey.objects.filter(created_by=user)
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user, code=uuid.uuid4().hex)

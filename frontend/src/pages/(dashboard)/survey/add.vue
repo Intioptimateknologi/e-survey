@@ -31,6 +31,10 @@ import { toast } from "@/components/ui/toast";
 import SurveyCreator from "@/components/surveyjs/SurveyCreator.vue";
 import Switch from "@/components/ui/switch/Switch.vue";
 import FormDescription from "@/components/ui/form/FormDescription.vue";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "zod";
+import { title } from "process";
+import { useForm } from "vee-validate";
 
 definePage({
   meta: {
@@ -55,6 +59,25 @@ creator.saveSurveyFunc = async function (survey: any) {
   })
 }
 
+// const formSchema = toTypedSchema(z.object({
+//   title: z.string({ required_error: 'Please enter a title.' }).min(1, { message: 'Please enter a title.' }),
+//   description: z.string({ required_error: 'Please enter a description.' }).min(1, { message: 'Please enter a description.' }),
+//   start_time: z.string({ required_error: 'Please select a start time.' }).min(1, { message: 'Please select a start time.' }),
+//   end_time: z.string({ required_error: 'Please select an end time.' }).min(1, { message: 'Please select an end time.' }),
+//   is_anonymous: z.boolean(),
+// }))
+
+// const { handleSubmit } = useForm({
+//   validationSchema: formSchema,
+//   initialValues: {
+//     title: '',
+//     description: '',
+//     start_time: '',
+//     end_time: '',
+//     is_anonymous: false,
+//   },
+// })
+
 const form = ref({
   title: '',
   description: '',
@@ -64,7 +87,7 @@ const form = ref({
   is_anonymous: false
 })
 
-async function handleSave(): Promise<void> {
+async function handleSave() {
   try {
     if (new Date(form.value.start_time) >= new Date(form.value.end_time)) {
       toast({

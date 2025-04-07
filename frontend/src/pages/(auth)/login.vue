@@ -17,6 +17,14 @@ import { useToast } from "@/components/ui/toast";
 import { LogIn } from "lucide-vue-next";
 import ForgotPasswordDialog from "@/components/auth/ForgotPasswordDialog.vue";
 import useApiFetch from "@/composables/useFetch";
+import { FormField } from "@/components/ui/form";
+import FormItem from "@/components/ui/form/FormItem.vue";
+import FormLabel from "@/components/ui/form/FormLabel.vue";
+import FormControl from "@/components/ui/form/FormControl.vue";
+import FormMessage from "@/components/ui/form/FormMessage.vue";
+import { toTypedSchema } from "@vee-validate/zod";
+import { z } from "zod";
+import { useForm } from "vee-validate";
 
 definePage({
   meta: {
@@ -27,25 +35,33 @@ definePage({
   },
 });
 
-const email = ref("");
-const password = ref("");
 const loading = ref(false);
 const errorMessage = ref("");
 const authStore = useAuthStore();
 const router = useRouter();
 const { toast } = useToast()
 
-async function handleLogin() {
+const formSchema = toTypedSchema(z.object({
+  username: z.string({ required_error: 'Please input an email/username.' }),
+  password: z.string({ required_error: 'Please input a password.' }),
+}))
+
+const { handleSubmit } = useForm({
+  validationSchema: formSchema,
+  initialValues: {
+    username: "",
+    password: "",
+  },
+})
+
+const onSubmit = handleSubmit(async (values) => {
   loading.value = true;
   errorMessage.value = "";
 
   try {
     const { data, error, response, statusCode } = await useApiFetch("/api/v1/token/")
-      .post({ username: email.value, password: password.value })
+      .post(values)
       .json();
-
-    console.log('data', data.value)
-    console.log('statusCode', statusCode.value)
 
     if (statusCode.value === 401) {
       console.log('-> Invalid username or password');
@@ -68,7 +84,7 @@ async function handleLogin() {
   } finally {
     loading.value = false;
   }
-}
+})
 </script>
 
 <template>
@@ -80,25 +96,39 @@ async function handleLogin() {
           Enter your email or username below to login to your account
         </p>
       </div>
-      <div class="grid gap-4">
+      <form class="grid gap-4" @submit="onSubmit">
         <div class="grid gap-2">
-          <Label for="email">Email/Username</Label>
-          <Input v-model="email" id="email" type="email" placeholder="johndoe@gmail.com" required />
+          <FormField v-slot="{ componentField }" name="username">
+            <FormItem>
+              <FormLabel>Email/Username</FormLabel>
+              <FormControl>
+                <Input type="text" placeholder="johndoe" v-bind="componentField" required />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
         </div>
         <div class="grid gap-2">
-          <div class="flex items-center">
-            <Label for="password">Password</Label>
-            <ForgotPasswordDialog />
-          </div>
-          <Input v-model="password" id="password" type="password" required @keydown.enter="handleLogin" />
+          <FormField v-slot="{ componentField }" name="password">
+            <FormItem>
+              <div class="flex items-center">
+                <FormLabel>Password</FormLabel>
+                <ForgotPasswordDialog />
+              </div>
+              <FormControl>
+                <Input type="password" v-bind="componentField" @keydown.enter="onSubmit" required />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
         </div>
         <p v-if="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
-        <Button :disabled="loading" @click="handleLogin" class="w-full">
+        <Button :disabled="loading" type="submit" class="w-full">
           <LogIn class="mr-1 h-4 w-4" />
           {{ loading ? "Logging in..." : "Login" }}
         </Button>
         <!-- <Button variant="outline" class="w-full">Login with Google</Button> -->
-      </div>
+      </form>
       <div class="mt-4 text-center text-sm">
         Don't have an account?
         <router-link to="/register" class="underline"> Sign up </router-link>
@@ -106,4 +136,3 @@ async function handleLogin() {
     </div>
   </AuthLayout>
 </template>
-

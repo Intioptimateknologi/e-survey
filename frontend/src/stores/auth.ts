@@ -27,8 +27,6 @@ export const useAuthStore = defineStore("auth", () => {
 
     const isFirstNameNull = data.user.first_name === "";
 
-    console.log(isFirstNameNull);
-
     const firstName = isFirstNameNull
       ? data.user.username.charAt(0).toUpperCase() + data.user.username.slice(1)
       : data.user.first_name;

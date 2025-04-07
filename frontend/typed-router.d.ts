@@ -35,6 +35,8 @@ declare module 'vue-router/auto-routes' {
     '/(dashboard)/survey/[code]': RouteRecordInfo<'/(dashboard)/survey/[code]', '/survey/:code', { code: ParamValue<true> }, { code: ParamValue<false> }>,
     '/(dashboard)/survey/add': RouteRecordInfo<'/(dashboard)/survey/add', '/survey/add', Record<never, never>, Record<never, never>>,
     '/(dashboard)/survey/edit/[code]': RouteRecordInfo<'/(dashboard)/survey/edit/[code]', '/survey/edit/:code', { code: ParamValue<true> }, { code: ParamValue<false> }>,
-    '/(dashboard)/users/[id]': RouteRecordInfo<'/(dashboard)/users/[id]', '/users/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/(dashboard)/user/': RouteRecordInfo<'/(dashboard)/user/', '/user', Record<never, never>, Record<never, never>>,
+    '/(dashboard)/user/[id]': RouteRecordInfo<'/(dashboard)/user/[id]', '/user/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/(dashboard)/user/edit/[id]': RouteRecordInfo<'/(dashboard)/user/edit/[id]', '/user/edit/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
   }
 }

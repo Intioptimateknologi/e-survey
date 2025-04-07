@@ -80,27 +80,35 @@ const data = {
       ],
     },
     {
+      title: 'User',
+      url: '#',
+      icon: UsersRound,
+      items: [
+        {
+          title: 'List',
+          url: '/user',
+        },
+        {
+          title: 'Registration',
+          url: '/user/registration',
+        },
+      ],
+    },
+    {
       title: 'Settings',
       url: '#',
       icon: Settings2,
       items: [
         {
-          title: 'General',
+          title: 'Profile',
           url: '/settings',
         },
-        // {
-        //   title: 'Team',
-        //   url: '#',
-        // },
-        // {
-        //   title: 'Billing',
-        //   url: '#',
-        // },
-        // {
-        //   title: 'Limits',
-        //   url: '#',
-        // },
+        {
+          title: 'Account',
+          url: '/settings/account',
+        },
       ],
+      onlyAdmin: true
     },
   ],
   projects: [

@@ -21,11 +21,15 @@ definePage({
   }
 })
 
+const userType = computed(() => useAuthStore().user?.profile.role)
+
 import { format } from 'date-fns';
 import { id as localeId } from 'date-fns/locale';
 import RespondentDataTable from "@/components/(dashboard)/survey/RespondentDataTable.vue";
 import SurveyResultTable from "@/components/(dashboard)/survey/SurveyResultTable.vue";
 import { ApiResponse } from "@/types/api";
+import { useAuthStore } from "@/stores/auth";
+import { computed } from "vue";
 
 const code = useRoute("/(dashboard)/survey/[code]").params.code
 
@@ -123,6 +127,10 @@ function handleRespondentDelete(id: number) {
               <td class="border px-4 py-2">End Time</td>
               <td class="border px-4 py-2">{{ getTime(survey.end_time) }}</td>
             </tr>
+            <tr v-if="userType === 'admin'">
+              <td class="border px-4 py-2">Author</td>
+              <td class="border px-4 py-2">{{ survey.created_by }}</td>
+            </tr>
             <tr>
               <td class="border px-4 py-2">Anonymous Survey</td>
               <td class="border px-4 py-2">{{ survey.is_anonymous ? '✔️' : '❌' }}</td>
@@ -168,7 +176,7 @@ function handleRespondentDelete(id: number) {
           </BreadcrumbItem>
           <BreadcrumbSeparator class="hidden md:block" />
           <BreadcrumbItem>
-            <BreadcrumbLink to="/survey/list">
+            <BreadcrumbLink to="/survey">
               List Survey
             </BreadcrumbLink>
           </BreadcrumbItem>

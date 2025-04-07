@@ -14,7 +14,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
+import { useAuthStore } from "@/stores/auth";
 import { ChevronRight, LayoutDashboardIcon, type LucideIcon } from 'lucide-vue-next'
+import { computed } from "vue";
 
 defineProps<{
   items: {
@@ -22,12 +24,15 @@ defineProps<{
     url: string
     icon?: LucideIcon
     isActive?: boolean
+    onlyAdmin?: boolean,
     items?: {
       title: string
       url: string
     }[]
   }[]
 }>()
+
+const userType = computed(() => useAuthStore().user?.profile.role)
 </script>
 
 <template>
@@ -40,34 +45,32 @@ defineProps<{
           <router-link to="/dashboard">Dashboard</router-link>
         </SidebarMenuButton>
       </SidebarMenuItem>
-      <Collapsible
-        v-for="item in items"
-        :key="item.title"
-        as-child
-        :default-open="item.isActive"
-        class="group/collapsible"
-      >
-        <SidebarMenuItem>
-          <CollapsibleTrigger as-child>
-            <SidebarMenuButton :tooltip="item.title">
-              <component :is="item.icon" v-if="item.icon" />
-              <span>{{ item.title }}</span>
-              <ChevronRight class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-            </SidebarMenuButton>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <SidebarMenuSub>
-              <SidebarMenuSubItem v-for="subItem in item.items" :key="subItem.title">
-                <SidebarMenuSubButton as-child>
-                  <router-link :to="subItem.url">
-                    <span>{{ subItem.title }}</span>
-                  </router-link>
-                </SidebarMenuSubButton>
-              </SidebarMenuSubItem>
-            </SidebarMenuSub>
-          </CollapsibleContent>
-        </SidebarMenuItem>
-      </Collapsible>
+      <template v-for="item in items" :key="item.title">
+        <Collapsible as-child :default-open="item.isActive" class="group/collapsible"
+          v-if="!(item.onlyAdmin && userType === 'member')">
+          <SidebarMenuItem>
+            <CollapsibleTrigger as-child>
+              <SidebarMenuButton :tooltip="item.title">
+                <component :is="item.icon" v-if="item.icon" />
+                <span>{{ item.title }}</span>
+                <ChevronRight
+                  class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <SidebarMenuSub>
+                <SidebarMenuSubItem v-for="subItem in item.items" :key="subItem.title">
+                  <SidebarMenuSubButton as-child>
+                    <router-link :to="subItem.url">
+                      <span>{{ subItem.title }}</span>
+                    </router-link>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          </SidebarMenuItem>
+        </Collapsible>
+      </template>
     </SidebarMenu>
   </SidebarGroup>
 </template>
