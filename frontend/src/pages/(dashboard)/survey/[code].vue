@@ -23,13 +23,12 @@ definePage({
 
 const userType = computed(() => useAuthStore().user?.profile.role)
 
-import { format } from 'date-fns';
-import { id as localeId } from 'date-fns/locale';
 import RespondentDataTable from "@/components/(dashboard)/survey/RespondentDataTable.vue";
 import SurveyResultTable from "@/components/(dashboard)/survey/SurveyResultTable.vue";
 import { ApiResponse } from "@/types/api";
 import { useAuthStore } from "@/stores/auth";
 import { computed } from "vue";
+import { getTime } from "@/utils/time";
 
 const code = useRoute("/(dashboard)/survey/[code]").params.code
 
@@ -37,10 +36,6 @@ const survey = ref<Survey | null>(null);
 const respondents = ref<Respondent[]>([]);
 const surveyJSON = ref(null);
 const surveyModel = ref<Model | null>(null);
-
-function getTime(time: string) {
-  return format(new Date(time), "dd MMMM yyyy HH:mm", { locale: localeId })
-}
 
 async function fetchData() {
   try {

@@ -7,6 +7,10 @@ import useApiFetch from "@/composables/useFetch";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import { toast } from "@/components/ui/toast";
 import { ApiResponse } from "@/types/api";
+import FrontLayout from "@/layouts/FrontLayout.vue";
+import Separator from "@/components/ui/separator/Separator.vue";
+import { getTime } from "@/utils/time";
+import SurveyLayout from "@/layouts/SurveyLayout.vue";
 
 const route = useRoute("/(root)/s/[code]");
 const router = useRouter();
@@ -19,8 +23,6 @@ definePage({
     requiresAuth: true,
   }
 })
-
-import { LayeredDarkPanelless } from "survey-core/themes";
 
 const data = ref<Survey | null>(null);
 const surveyJSON = ref(null);
@@ -166,13 +168,50 @@ onMounted(async() => await fetchData());
 </script>
 
 <template>
-  <DefaultLayout :is-survey="true">
+  <SurveyLayout :is-survey="true">
     <template v-if="data">
+      <div class="overflow-hidden lg:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto mb-3">
+        <table class="table-auto border-collapse w-full">
+          <tbody>
+            <tr>
+              <td class="border px-4 py-2 w-1/4">Title</td>
+              <td class="border px-4 py-2">{{ data.title }}</td>
+            </tr>
+            <tr>
+              <td class="border px-4 py-2">Description</td>
+              <td class="border px-4 py-2">{{ data.description }}</td>
+            </tr>
+            <tr>
+              <td class="border px-4 py-2">Start Time</td>
+              <td class="border px-4 py-2">{{ getTime(data.start_time) }}</td>
+            </tr>
+            <tr>
+              <td class="border px-4 py-2">End Time</td>
+              <td class="border px-4 py-2">{{ getTime(data.end_time) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <Separator class="mb-3" />
       <div v-if="surveyModel">
         <SurveyComponent :model="surveyModel" />
       </div>
-      <p v-else>Loading survey...</p>
+      <div v-else class="overflow-hidden lg:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto mb-3">
+        <div class="flex justify-center items-center">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h12c0-6.627-5.373-12-12-12z"></path>
+          </svg>
+          <p>Loading survey...</p>
+        </div>
+      </div>
     </template>
-  </DefaultLayout>
+  </SurveyLayout>
 </template>
+
+<style>
+.sd-root-modern {
+  background-color: white !important;
+}
+</style>
 

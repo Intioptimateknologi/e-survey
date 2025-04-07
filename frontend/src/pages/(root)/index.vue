@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Navbar from "@/components/landing/Navbar.vue";
 import Hero from "@/components/landing/Hero.vue";
 import Benefits from "@/components/landing/Benefits.vue";
 import Features from "@/components/landing/Features.vue";
@@ -12,24 +11,24 @@ import Pricing from "@/components/landing/Pricing.vue";
 import Community from "@/components/landing/Community.vue";
 import Contact from "@/components/landing/Contact.vue";
 import FAQ from "@/components/landing/FAQ.vue";
-import Footer from "@/components/landing/Footer.vue";
+import FrontLayout from "@/layouts/FrontLayout.vue";
 </script>
 
 <template>
-  <Navbar />
-  <Hero />
-  <!-- <Sponsors /> -->
-  <Benefits />
-  <Features />
-  <Services />
-  <HowItWorks />
-  <!-- <Testimonials /> -->
-  <!-- <Team /> -->
-  <Community />
-  <Pricing />
-  <Contact />
-  <FAQ />
-  <Footer />
+  <FrontLayout>
+    <Hero />
+    <!-- <Sponsors /> -->
+    <Benefits />
+    <Features />
+    <Services />
+    <HowItWorks />
+    <!-- <Testimonials /> -->
+    <!-- <Team /> -->
+    <Community />
+    <Pricing />
+    <Contact />
+    <FAQ />
+  </FrontLayout>
 </template>
 
 <!-- <script setup lang="ts">

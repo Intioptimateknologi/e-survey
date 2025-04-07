@@ -56,6 +56,10 @@ const routeList: RouteProps[] = [
     href: "#faq",
     label: "FAQ",
   },
+  {
+    href: "/about",
+    label: "About",
+  },
 ];
 
 const featureList: FeatureProps[] = [
@@ -80,67 +84,41 @@ const authStore = useAuthStore()
 </script>
 
 <template>
-  <header
-    :class="{
-      'shadow-light': mode === 'light',
-      'shadow-dark': mode === 'dark',
-      'w-[90%] md:w-[70%] lg:w-[75%] lg:max-w-screen-xl top-5 mx-auto sticky border z-40 rounded-2xl flex justify-between items-center p-2 bg-card shadow-md': true,
-    }"
-  >
-    <a
-      href="/"
-      class="font-bold text-lg flex items-center"
-    >
-    <img
-                  src="/logo.png"
-                    class="rounded-lg size-9 mr-2"
-                  />
-      E-SURVEY</a
-    >
+  <header :class="{
+    'shadow-light': mode === 'light',
+    'shadow-dark': mode === 'dark',
+    'w-[90%] md:w-[70%] lg:w-[75%] lg:max-w-screen-xl top-5 mx-auto sticky border z-40 rounded-2xl flex justify-between items-center p-2 bg-card shadow-md': true,
+  }">
+    <router-link to="/" class="font-bold text-lg flex items-center">
+      <img src="/logo.png" class="rounded-lg size-9 mr-2" />
+      E-SURVEY</router-link>
     <!-- Mobile -->
     <div class="sm:flex items-center lg:hidden">
       <Sheet v-model:open="isOpen">
         <SheetTrigger as-child>
-          <Menu
-            @click="isOpen = true"
-            class="cursor-pointer"
-          />
+          <Menu @click="isOpen = true" class="cursor-pointer" />
         </SheetTrigger>
 
-        <SheetContent
-          side="left"
-          class="flex flex-col justify-between rounded-tr-2xl rounded-br-2xl bg-card"
-        >
+        <SheetContent side="left" class="flex flex-col justify-between rounded-tr-2xl rounded-br-2xl bg-card">
           <div>
             <SheetHeader class="mb-4 ml-4">
               <SheetTitle class="flex items-center">
-                <a
-                  href="/"
-                  class="flex items-center"
-                >
-                  <img
-                  src="/logo.png"
-                    class="rounded-lg size-9 mr-2"
-                  />
+                <router-link to="/" class="flex items-center">
+                  <img src="/logo.png" class="rounded-lg size-9 mr-2" />
                   E-SURVEY
-                </a>
+                </router-link>
               </SheetTitle>
             </SheetHeader>
 
             <div class="flex flex-col gap-2">
-              <Button
-                v-for="{ href, label } in routeList"
-                :key="label"
-                as-child
-                variant="ghost"
-                class="justify-start text-base"
-              >
-                <a
-                  @click="isOpen = false"
-                  :href="href"
-                >
+              <Button v-for="{ href, label } in routeList" :key="label" as-child variant="ghost"
+                class="justify-start text-base">
+                <a v-if="href.includes('#')" @click="isOpen = false" :href="'/' + href">
                   {{ label }}
                 </a>
+                <router-link v-else @click="isOpen = false" :to="href">
+                  {{ label }}
+                </router-link>
               </Button>
             </div>
           </div>
@@ -163,17 +141,10 @@ const authStore = useAuthStore()
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <div class="grid w-[600px] grid-cols-2 gap-5 p-4">
-              <img
-                src="/images/survey.jpg"
-                alt="Beach"
-                class="h-full w-full rounded-md object-cover"
-              />
+              <img src="/images/survey.jpg" alt="Beach" class="h-full w-full rounded-md object-cover" />
               <ul class="flex flex-col gap-2">
-                <li
-                  v-for="{ title, description } in featureList"
-                  :key="title"
-                  class="rounded-md p-3 text-sm hover:bg-muted"
-                >
+                <li v-for="{ title, description } in featureList" :key="title"
+                  class="rounded-md p-3 text-sm hover:bg-muted">
                   <p class="mb-1 font-semibold leading-none text-foreground">
                     {{ title }}
                   </p>
@@ -188,16 +159,14 @@ const authStore = useAuthStore()
 
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Button
-              v-for="{ href, label } in routeList"
-              :key="label"
-              as-child
-              variant="ghost"
-              class="justify-start text-base"
-            >
-              <a :href="href">
+            <Button v-for="{ href, label } in routeList" :key="label" as-child variant="ghost"
+              class="justify-start text-base">
+              <a v-if="href.includes('#')" @click="isOpen = false" :href="'/' + href">
                 {{ label }}
               </a>
+              <router-link v-else @click="isOpen = false" :to="href">
+                {{ label }}
+              </router-link>
             </Button>
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -207,24 +176,13 @@ const authStore = useAuthStore()
     <div class="hidden lg:flex">
       <ToggleTheme />
 
-      <Button
-        as-child
-        size="sm"
-        variant="outline"
-        aria-label="View features"
-      >
-        <router-link
-          to="/dashboard"
-          v-if="authStore.isAuthenticated"
-        >
-        <LayoutDashboardIcon class="h-4 w-4 mr-2" />
+      <Button as-child size="sm" variant="outline" aria-label="View features">
+        <router-link to="/dashboard" v-if="authStore.isAuthenticated">
+          <LayoutDashboardIcon class="h-4 w-4 mr-2" />
           Dashboard
         </router-link>
-        <router-link
-          to="/login"
-          v-else
-        >
-        <LogInIcon class="h-4 w-4 mr-2" />
+        <router-link to="/login" v-else>
+          <LogInIcon class="h-4 w-4 mr-2" />
           Login
         </router-link>
       </Button>
