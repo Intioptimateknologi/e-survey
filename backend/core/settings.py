@@ -106,8 +106,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'iot_e_survey',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
+        'USER': 'ptipo',
+        'PASSWORD': 'P4ssw0rd.2019',
 	    'HOST': 'localhost',
         'PORT':'5432',
     }

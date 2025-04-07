@@ -7,6 +7,9 @@ import vueJsx from "@vitejs/plugin-vue-jsx";
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  server: {
+    allowedHosts: ['e-survey.intioptima.com']
+  },
   css: {
     postcss: {
       plugins: [tailwind(), autoprefixer()],
